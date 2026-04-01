@@ -1,18 +1,22 @@
-import React from 'react';
+import { useLocation } from 'react-router-dom';
 import { Bell, Search, User } from 'lucide-react';
 
-export function TopBar({ currentPage }) {
+export function TopBar() {
+  const location = useLocation();
+  
   const pageTitles = {
-    dashboard: 'Dashboard',
-    authors: 'Authors',
-    books: 'Books',
-    borrowings: 'Borrowings',
-    statistics: 'Statistics',
+    '/dashboard': 'Dashboard',
+    '/authors': 'Authors',
+    '/books': 'Books',
+    '/borrowings': 'Borrowings',
+    '/statistics': 'Statistics',
   };
+
+  const title = pageTitles[location.pathname] || 'Library System';
 
   return (
     <header className="fixed top-0 right-0 left-64 h-16 bg-white border-b border-border flex items-center justify-between px-8 z-40">
-      <h1 className="text-xl font-bold tracking-tight">{pageTitles[currentPage]}</h1>
+      <h1 className="text-xl font-bold tracking-tight">{title}</h1>
 
       <div className="flex items-center gap-6">
         <div className="relative hidden md:block">

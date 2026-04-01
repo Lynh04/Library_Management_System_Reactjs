@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Plus, Search, Edit2, Trash2, Eye, BookOpen, User, Calendar, Hash, AlertTriangle } from 'lucide-react';
 import { Modal } from '../Modal';
 import { Button, Badge } from '../UI';
@@ -21,6 +22,7 @@ const initialBooks = [
 ];
 
 export default function Books() {
+  const navigate = useNavigate();
   const [books, setBooks] = useState(() => {
     const saved = localStorage.getItem('library_books');
     return saved ? JSON.parse(saved) : initialBooks;
@@ -146,11 +148,14 @@ export default function Books() {
                       <span className="font-semibold text-sm">{book.title}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
+                  <td className="px-6 py-4 text-sm text-muted-foreground whitespace-nowrap">
+                    <button 
+                      onClick={() => navigate('/authors')}
+                      className="flex items-center gap-2 hover:text-primary transition-colors cursor-pointer"
+                    >
                       <User size={14} />
                       {getAuthorName(book.authorId)}
-                    </div>
+                    </button>
                   </td>
                   <td className="px-6 py-4 text-sm text-muted-foreground">
                     {book.publishedYear}

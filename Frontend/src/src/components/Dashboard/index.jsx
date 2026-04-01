@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Users, BookOpen, ArrowLeftRight, TrendingUp, History, Verified, ArrowRight, BookOpen as BookIcon, FileText } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { cn } from '@/lib/utils';
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [authors, setAuthors] = useState([]);
   const [books, setBooks] = useState([]);
   const [borrowings, setBorrowings] = useState([]);
@@ -76,9 +78,12 @@ export default function Dashboard() {
     <div className="p-8 space-y-8">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-xl border border-border shadow-sm hover:shadow-md transition-shadow">
+        <div 
+          onClick={() => navigate('/authors')}
+          className="bg-white p-6 rounded-xl border border-border shadow-sm hover:shadow-md transition-all cursor-pointer group"
+        >
           <div className="flex justify-between items-start mb-4">
-            <div className="bg-blue-50 p-2 rounded-lg text-blue-600">
+            <div className="bg-blue-50 p-2 rounded-lg text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
               <Users size={24} />
             </div>
             <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded tracking-widest uppercase">Authors</span>
@@ -91,9 +96,12 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-xl border border-border shadow-sm hover:shadow-md transition-shadow">
+        <div 
+          onClick={() => navigate('/books')}
+          className="bg-white p-6 rounded-xl border border-border shadow-sm hover:shadow-md transition-all cursor-pointer group"
+        >
           <div className="flex justify-between items-start mb-4">
-            <div className="bg-amber-50 p-2 rounded-lg text-amber-600">
+            <div className="bg-amber-50 p-2 rounded-lg text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-colors">
               <BookIcon size={24} />
             </div>
             <span className="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded tracking-widest uppercase">Inventory</span>
@@ -106,9 +114,12 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-xl border border-border shadow-sm hover:shadow-md transition-shadow">
+        <div 
+          onClick={() => navigate('/borrowings')}
+          className="bg-white p-6 rounded-xl border border-border shadow-sm hover:shadow-md transition-all cursor-pointer group"
+        >
           <div className="flex justify-between items-start mb-4">
-            <div className="bg-emerald-50 p-2 rounded-lg text-emerald-600">
+            <div className="bg-emerald-50 p-2 rounded-lg text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
               <ArrowLeftRight size={24} />
             </div>
             <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded tracking-widest uppercase">Borrowings</span>
@@ -131,7 +142,10 @@ export default function Dashboard() {
               <h2 className="text-lg font-bold tracking-tight">Top Borrowed Books</h2>
               <p className="text-xs text-muted-foreground mt-0.5">Most circulated titles.</p>
             </div>
-            <button className="flex items-center gap-1 text-xs font-bold text-primary hover:underline underline-offset-4">
+            <button 
+              onClick={() => navigate('/statistics')}
+              className="flex items-center gap-1 text-xs font-bold text-primary hover:underline underline-offset-4"
+            >
               View All <ArrowRight size={14} />
             </button>
           </div>
@@ -220,7 +234,10 @@ export default function Dashboard() {
       <section className="bg-white rounded-xl border border-border shadow-sm overflow-hidden">
         <div className="p-6 border-b border-border flex items-center justify-between">
           <h2 className="text-lg font-bold tracking-tight">Recent Activity</h2>
-          <button className="text-xs font-bold text-primary hover:underline underline-offset-4">View All Activity</button>
+          <button 
+            onClick={() => navigate('/borrowings')}
+            className="text-xs font-bold text-primary hover:underline underline-offset-4"
+          >View All Activity</button>
         </div>
         <div className="overflow-x-auto">
           {recentActivities.length > 0 ? (

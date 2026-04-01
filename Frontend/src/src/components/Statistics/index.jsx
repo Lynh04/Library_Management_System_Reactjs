@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { TrendingUp, ArrowLeftRight, BookOpen, Users, Download, Filter, Calendar } from 'lucide-react';
 import { Button } from '../UI';
 
 export default function Statistics() {
+  const navigate = useNavigate();
   const [books, setBooks] = useState([]);
   const [borrowings, setBorrowings] = useState([]);
 
@@ -178,9 +180,12 @@ export default function Statistics() {
                <div className="w-full h-full rounded-full border-8 border-slate-100 flex items-center justify-center"></div>
             )}
             
-            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-8">
-              <span className="text-3xl font-black text-primary">{totalEvents}</span>
-              <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Total Events</span>
+            <div 
+              onClick={() => navigate('/borrowings')}
+              className="absolute inset-0 flex flex-col items-center justify-center pointer-events-auto cursor-pointer group pb-8"
+            >
+              <span className="text-3xl font-black text-primary group-hover:scale-110 transition-transform">{totalEvents}</span>
+              <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest group-hover:text-primary transition-colors">Total Events</span>
             </div>
           </div>
 

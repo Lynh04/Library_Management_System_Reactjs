@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Plus, Search, Calendar, User, BookOpen, ArrowLeftRight, CheckCircle, Clock } from 'lucide-react';
 import { Modal } from '../Modal';
 import { Button, Badge } from '../UI';
@@ -17,6 +18,7 @@ const initialBorrowings = [
 ];
 
 export default function Borrowings() {
+  const navigate = useNavigate();
   const [borrowings, setBorrowings] = useState(() => {
     const saved = localStorage.getItem('library_borrowings');
     return saved ? JSON.parse(saved) : initialBorrowings;
@@ -118,12 +120,15 @@ export default function Borrowings() {
               {filteredBorrowings.map((record) => (
                 <tr key={record.id} className="hover:bg-muted/10 transition-colors group">
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded bg-muted flex items-center justify-center text-muted-foreground">
+                    <button 
+                      onClick={() => navigate('/books')}
+                      className="flex items-center gap-3 hover:text-primary transition-colors cursor-pointer text-left"
+                    >
+                      <div className="w-8 h-8 rounded bg-muted flex items-center justify-center text-muted-foreground group-hover:bg-primary/10 transition-colors">
                         <BookOpen size={14} />
                       </div>
                       <span className="font-semibold text-sm">{getBookTitle(record.bookId)}</span>
-                    </div>
+                    </button>
                   </td>
                   <td className="px-6 py-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
