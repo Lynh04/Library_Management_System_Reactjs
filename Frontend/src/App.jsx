@@ -4,6 +4,8 @@ import { TopBar } from './src/components/Header'
 import AuthorManagement from './src/pages/AuthorManagement'
 import BookManagement from './src/pages/BookManagement'
 import BorrowManagement from './src/pages/BorrowManagement'
+import Dashboard from './src/components/Dashboard'
+import Statistics from './src/components/Statistics'
 
 function App() {
   const [currentPage, setCurrentPage] = useState('dashboard')
@@ -20,6 +22,10 @@ function App() {
           <BookManagement />
         ) : currentPage === 'borrowings' ? (
           <BorrowManagement />
+        ) : currentPage === 'dashboard' ? (
+          <Dashboard />
+        ) : currentPage === 'statistics' ? (
+          <Statistics />
         ) : (
           <div className="p-8">
             <div className="bg-white rounded-lg p-6 shadow-sm border border-border">
