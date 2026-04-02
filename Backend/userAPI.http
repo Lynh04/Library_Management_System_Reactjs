@@ -1,0 +1,38 @@
+# @name createUser
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "age": 20
+}
+
+###
+
+# @name getAllUsers
+GET http://localhost:3001/api/users
+
+###
+
+# @name getUserById
+# Thay {id} bằng ID thật lấy từ kết quả của "Get All Users"
+GET http://localhost:3001/api/users/65f1a2b3c4d5e6f7a8b9c0d1
+
+###
+
+# @name updateUser
+# Thay {id} bằng ID thật
+PUT http://localhost:3001/api/users/65f1a2b3c4d5e6f7a8b9c0d1
+Content-Type: application/json
+
+{
+  "name": "John Doe Updated",
+  "age": 25
+}
+
+###
+
+# @name deleteUser
+# Thay {id} bằng ID thật
+DELETE http://localhost:3001/api/users/65f1a2b3c4d5e6f7a8b9c0d1

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { bookService } from '../../services/bookService';
+import { borrowingService } from '../../services/borrowingService';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { TrendingUp, ArrowLeftRight, BookOpen, Users, Download, Filter, Calendar } from 'lucide-react';
 import { Button } from '../UI';
@@ -9,13 +11,27 @@ export default function Statistics() {
   const [books, setBooks] = useState([]);
   const [borrowings, setBorrowings] = useState([]);
 
-  useEffect(() => {
-    const savedBooks = localStorage.getItem('library_books');
-    if (savedBooks) setBooks(JSON.parse(savedBooks));
+  const [isLoading, setIsLoading] = useState(true);
 
-    const savedBorrowings = localStorage.getItem('library_borrowings');
-    if (savedBorrowings) setBorrowings(JSON.parse(savedBorrowings));
+  useEffect(() => {
+    fetchStatistics();
   }, []);
+
+  const fetchStatistics = async () => {
+    try {
+      setIsLoading(true);
+      const [booksData, borrowData] = await Promise.all([
+        bookService.getAll(),
+        borrowingService.getAll()
+      ]);
+      setBooks(booksData);
+      setBorrowings(borrowData);
+    } catch (err) {
+      console.error('Failed to load statistics:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const totalEvents = borrowings.length;
   
@@ -36,7 +52,10 @@ export default function Statistics() {
     bookBorrowCounts[b.bookId] = (bookBorrowCounts[b.bookId] || 0) + 1;
   });
   
-  const getBookTitle = (id) => books.find(b => b._id === id)?.title || 'Unknown Volume';
+  const getBookTitle = (bookData) => {
+    if (typeof bookData === 'object' && bookData?.title) return bookData.title;
+    return books.find(b => b._id === bookData)?.title || 'Unknown Volume';
+  };
 
   const topBooksData = Object.keys(bookBorrowCounts)
     .map(bookId => ({

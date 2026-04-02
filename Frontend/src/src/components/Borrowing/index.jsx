@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { borrowingService } from '../../services/borrowingService';
+import { bookService } from '../../services/bookService';
 import { Plus, Search, Calendar, User, BookOpen, ArrowLeftRight, CheckCircle, Clock } from 'lucide-react';
 import { Modal } from '../Modal';
 import { Button, Badge } from '../UI';
@@ -19,22 +22,29 @@ const initialBorrowings = [
 
 export default function Borrowings() {
   const navigate = useNavigate();
-  const [borrowings, setBorrowings] = useState(() => {
-    const saved = localStorage.getItem('library_borrowings');
-    return saved ? JSON.parse(saved) : initialBorrowings;
-  });
-  const [books, setBooks] = useState(() => {
-    const saved = localStorage.getItem('library_books');
-    return saved ? JSON.parse(saved) : initialBooks;
-  });
+  const [borrowings, setBorrowings] = useState([]);
+  const [books, setBooks] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    localStorage.setItem('library_borrowings', JSON.stringify(borrowings));
-  }, [borrowings]);
+    fetchData();
+  }, []);
 
-  useEffect(() => {
-    localStorage.setItem('library_books', JSON.stringify(books));
-  }, [books]);
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const [borrowData, booksData] = await Promise.all([
+        borrowingService.getAll(),
+        bookService.getAll()
+      ]);
+      setBorrowings(borrowData);
+      setBooks(booksData);
+    } catch (err) {
+      toast.error('Failed to load borrowing records');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const [isBorrowModalOpen, setIsBorrowModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -44,34 +54,37 @@ export default function Borrowings() {
     borrowerName: ''
   });
 
-  const handleBorrow = (e) => {
+  const handleBorrow = async (e) => {
     e.preventDefault();
-    const book = books.find(b => b._id === formData.bookId);
-    if (!book || book.availableStock <= 0) return;
-
-    const newBorrowing = {
-      id: Math.random().toString(36).substr(2, 9),
-      bookId: formData.bookId,
-      borrowerName: formData.borrowerName,
-      borrowDate: new Date().toISOString().split('T')[0],
-      status: 'Borrowed'
-    };
-
-    setBorrowings([newBorrowing, ...borrowings]);
-    setBooks(books.map(b => b._id === formData.bookId ? { ...b, availableStock: b.availableStock - 1 } : b));
-    setIsBorrowModalOpen(false);
-    setFormData({ bookId: '', borrowerName: '' });
+    try {
+      const payload = {
+        ...formData,
+        borrowDate: new Date().toISOString().split('T')[0]
+      };
+      await borrowingService.create(payload);
+      await fetchData(); // Refresh to update stocks and titles
+      setIsBorrowModalOpen(false);
+      setFormData({ bookId: '', borrowerName: '' });
+      toast.success('Loan confirmed successfully!');
+    } catch (err) {
+      toast.error('Failed to process loan');
+    }
   };
 
-  const handleReturn = (borrowingId) => {
-    const borrowing = borrowings.find(b => b.id === borrowingId);
-    if (!borrowing || borrowing.status === 'Returned') return;
-
-    setBorrowings(borrowings.map(b => b.id === borrowingId ? { ...b, status: 'Returned' } : b));
-    setBooks(books.map(b => b._id === borrowing.bookId ? { ...b, availableStock: b.availableStock + 1 } : b));
+  const handleReturn = async (borrowingId) => {
+    try {
+      await borrowingService.returnBook(borrowingId);
+      await fetchData();
+      toast.success('Volume returned to inventory!');
+    } catch (err) {
+      toast.error('Failed to process return');
+    }
   };
 
-  const getBookTitle = (id) => books.find(b => b._id === id)?.title || 'Unknown Volume';
+  const getBookTitle = (bookData) => {
+    if (typeof bookData === 'object' && bookData?.title) return bookData.title;
+    return books.find(b => b._id === bookData)?.title || 'Unknown Volume';
+  };
 
   const filteredBorrowings = borrowings.filter(b => 
     getBookTitle(b.bookId).toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -118,7 +131,7 @@ export default function Borrowings() {
             </thead>
             <tbody className="divide-y divide-border">
               {filteredBorrowings.map((record) => (
-                <tr key={record.id} className="hover:bg-muted/10 transition-colors group">
+                <tr key={record._id} className="hover:bg-muted/10 transition-colors group">
                   <td className="px-6 py-4">
                     <button 
                       onClick={() => navigate('/books')}
@@ -158,7 +171,7 @@ export default function Borrowings() {
                         size="sm" 
                         variant="outline" 
                         className="h-8 text-xs font-bold"
-                        onClick={() => handleReturn(record.id)}
+                        onClick={() => handleReturn(record._id)}
                       >
                         Return Book
                       </Button>

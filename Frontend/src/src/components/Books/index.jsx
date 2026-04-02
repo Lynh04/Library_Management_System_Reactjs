@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { bookService } from '../../services/bookService';
+import { authorService } from '../../services/authorService';
 import { Plus, Search, Edit2, Trash2, Eye, BookOpen, User, Calendar, Hash, AlertTriangle } from 'lucide-react';
 import { Modal } from '../Modal';
 import { Button, Badge } from '../UI';
@@ -23,19 +26,29 @@ const initialBooks = [
 
 export default function Books() {
   const navigate = useNavigate();
-  const [books, setBooks] = useState(() => {
-    const saved = localStorage.getItem('library_books');
-    return saved ? JSON.parse(saved) : initialBooks;
-  });
-  
-  const [authors] = useState(() => {
-    const saved = localStorage.getItem('library_authors');
-    return saved ? JSON.parse(saved) : initialAuthors;
-  });
+  const [books, setBooks] = useState([]);
+  const [authors, setAuthors] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    localStorage.setItem('library_books', JSON.stringify(books));
-  }, [books]);
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const [booksData, authorsData] = await Promise.all([
+        bookService.getAll(),
+        authorService.getAll()
+      ]);
+      setBooks(booksData);
+      setAuthors(authorsData);
+    } catch (err) {
+      toast.error('Failed to load library data');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -50,19 +63,21 @@ export default function Books() {
     publishedYear: new Date().getFullYear()
   });
 
-  const handleAddBook = (e) => {
+  const handleAddBook = async (e) => {
     e.preventDefault();
-    const now = new Date().toISOString();
-    const newBook = {
-      _id: Math.random().toString(36).substr(2, 9),
-      ...formData,
-      availableStock: formData.totalStock,
-      createdAt: now,
-      updatedAt: now
-    };
-    setBooks([...books, newBook]);
-    setIsAddModalOpen(false);
-    setFormData({ title: '', authorId: '', totalStock: 0, publishedYear: new Date().getFullYear() });
+    try {
+      const payload = {
+        ...formData,
+        availableStock: formData.totalStock
+      };
+      await bookService.create(payload);
+      await fetchData(); // Refresh to get populated author
+      setIsAddModalOpen(false);
+      setFormData({ title: '', authorId: '', totalStock: 0, publishedYear: new Date().getFullYear() });
+      toast.success('Book cataloged successfully!');
+    } catch (err) {
+      toast.error('Failed to catalog book');
+    }
   };
 
   const handleViewClick = (book) => {
@@ -74,32 +89,38 @@ export default function Books() {
     setSelectedBook(book);
     setFormData({
       title: book.title,
-      authorId: book.authorId,
+      authorId: typeof book.authorId === 'object' ? book.authorId._id : book.authorId,
       totalStock: book.totalStock,
       publishedYear: book.publishedYear || new Date().getFullYear()
     });
     setIsEditModalOpen(true);
   };
 
-  const handleUpdateBook = (e) => {
+  const handleUpdateBook = async (e) => {
     e.preventDefault();
     if (selectedBook) {
-      const now = new Date().toISOString();
-      // Adjust available stock based on the change in total stock
-      const stockDiff = formData.totalStock - selectedBook.totalStock;
-      setBooks(books.map(b => b._id === selectedBook._id ? { 
-        ...b, 
-        ...formData, 
-        availableStock: Math.max(0, b.availableStock + stockDiff),
-        updatedAt: now
-      } : b));
-      setIsEditModalOpen(false);
-      setSelectedBook(null);
-      setFormData({ title: '', authorId: '', totalStock: 0, publishedYear: new Date().getFullYear() });
+      try {
+        const stockDiff = formData.totalStock - selectedBook.totalStock;
+        const payload = {
+          ...formData,
+          availableStock: Math.max(0, selectedBook.availableStock + stockDiff)
+        };
+        await bookService.update(selectedBook._id, payload);
+        await fetchData();
+        setIsEditModalOpen(false);
+        setSelectedBook(null);
+        setFormData({ title: '', authorId: '', totalStock: 0, publishedYear: new Date().getFullYear() });
+        toast.success('Book updated successfully!');
+      } catch (err) {
+        toast.error('Failed to update book');
+      }
     }
   };
 
-  const getAuthorName = (id) => authors.find(a => a._id === id)?.name || 'Unknown';
+  const getAuthorName = (authorData) => {
+    if (typeof authorData === 'object' && authorData?.name) return authorData.name;
+    return authors.find(a => a._id === authorData)?.name || 'Unknown';
+  };
 
   return (
     <div className="p-8 space-y-6">
@@ -442,9 +463,15 @@ export default function Books() {
           </p>
           <div className="flex justify-end gap-3 pt-2">
             <Button variant="outline" onClick={() => setIsDeleteModalOpen(false)}>Keep Volume</Button>
-            <Button variant="destructive" onClick={() => {
-              setBooks(books.filter(b => b._id !== selectedBook?._id));
-              setIsDeleteModalOpen(false);
+            <Button variant="destructive" onClick={async () => {
+              try {
+                await bookService.delete(selectedBook._id);
+                setBooks(books.filter(b => b._id !== selectedBook._id));
+                setIsDeleteModalOpen(false);
+                toast.success('Book removed from catalog!');
+              } catch (err) {
+                toast.error('Failed to remove book');
+              }
             }}>Remove Volume</Button>
           </div>
         </div>

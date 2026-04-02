@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
+import { authorService } from '../../services/authorService';
 import { Plus, Search, Edit2, Trash2, Eye, Calendar, User } from 'lucide-react';
 import { Modal } from '../Modal';
 import { Button, Badge } from '../UI';
@@ -12,14 +14,24 @@ const initialAuthors = [
 ];
 
 export default function Authors() {
-    const [authors, setAuthors] = useState(() => {
-        const saved = localStorage.getItem('library_authors');
-        return saved ? JSON.parse(saved) : initialAuthors;
-    });
+    const [authors, setAuthors] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        localStorage.setItem('library_authors', JSON.stringify(authors));
-    }, [authors]);
+        fetchAuthors();
+    }, []);
+
+    const fetchAuthors = async () => {
+        try {
+            setIsLoading(true);
+            const data = await authorService.getAll();
+            setAuthors(data);
+        } catch (err) {
+            toast.error('Failed to fetch authors');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -33,18 +45,17 @@ export default function Authors() {
         birthDate: ''
     });
 
-    const handleAddAuthor = (e) => {
+    const handleAddAuthor = async (e) => {
         e.preventDefault();
-        const now = new Date().toISOString();
-        const newAuthor = {
-            _id: Math.random().toString(36).substr(2, 9),
-            ...formData,
-            createdAt: now,
-            updatedAt: now
-        };
-        setAuthors([...authors, newAuthor]);
-        setIsAddModalOpen(false);
-        setFormData({ name: '', bio: '', birthDate: '' });
+        try {
+            const author = await authorService.create(formData);
+            setAuthors([author, ...authors]);
+            setIsAddModalOpen(false);
+            setFormData({ name: '', bio: '', birthDate: '' });
+            toast.success('Author registered successfully!');
+        } catch (err) {
+            toast.error('Failed to register author');
+        }
     };
 
     const handleViewClick = (author) => {
@@ -62,22 +73,33 @@ export default function Authors() {
         setIsEditModalOpen(true);
     };
 
-    const handleUpdateAuthor = (e) => {
+    const handleUpdateAuthor = async (e) => {
         e.preventDefault();
         if (selectedAuthor) {
-            const now = new Date().toISOString();
-            setAuthors(authors.map(a => a._id === selectedAuthor._id ? { ...a, ...formData, updatedAt: now } : a));
-            setIsEditModalOpen(false);
-            setSelectedAuthor(null);
-            setFormData({ name: '', bio: '', birthDate: '' });
+            try {
+                const updated = await authorService.update(selectedAuthor._id, formData);
+                setAuthors(authors.map(a => a._id === selectedAuthor._id ? updated : a));
+                setIsEditModalOpen(false);
+                setSelectedAuthor(null);
+                setFormData({ name: '', bio: '', birthDate: '' });
+                toast.success('Author updated successfully!');
+            } catch (err) {
+                toast.error('Failed to update author');
+            }
         }
     };
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (selectedAuthor) {
-            setAuthors(authors.filter(a => a._id !== selectedAuthor._id));
-            setIsDeleteModalOpen(false);
-            setSelectedAuthor(null);
+            try {
+                await authorService.delete(selectedAuthor._id);
+                setAuthors(authors.filter(a => a._id !== selectedAuthor._id));
+                setIsDeleteModalOpen(false);
+                setSelectedAuthor(null);
+                toast.success('Author removed permanently!');
+            } catch (err) {
+                toast.error('Failed to remove author');
+            }
         }
     };
 

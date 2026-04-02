@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { authorService } from '../../services/authorService';
+import { bookService } from '../../services/bookService';
+import { borrowingService } from '../../services/borrowingService';
 import { Users, BookOpen, ArrowLeftRight, TrendingUp, History, Verified, ArrowRight, BookOpen as BookIcon, FileText } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { cn } from '@/lib/utils';
@@ -9,17 +12,29 @@ export default function Dashboard() {
   const [authors, setAuthors] = useState([]);
   const [books, setBooks] = useState([]);
   const [borrowings, setBorrowings] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const savedAuthors = localStorage.getItem('library_authors');
-    if (savedAuthors) setAuthors(JSON.parse(savedAuthors));
-
-    const savedBooks = localStorage.getItem('library_books');
-    if (savedBooks) setBooks(JSON.parse(savedBooks));
-
-    const savedBorrowings = localStorage.getItem('library_borrowings');
-    if (savedBorrowings) setBorrowings(JSON.parse(savedBorrowings));
+    fetchDashboardData();
   }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      setIsLoading(true);
+      const [authorsData, booksData, borrowingsData] = await Promise.all([
+        authorService.getAll(),
+        bookService.getAll(),
+        borrowingService.getAll()
+      ]);
+      setAuthors(authorsData);
+      setBooks(booksData);
+      setBorrowings(borrowingsData);
+    } catch (err) {
+      console.error('Failed to fetch dashboard data:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Summary logic
   const totalAuthors = authors.length;
@@ -45,7 +60,10 @@ export default function Dashboard() {
     bookBorrowCounts[b.bookId] = (bookBorrowCounts[b.bookId] || 0) + 1;
   });
   
-  const getBookTitle = (id) => books.find(b => b._id === id)?.title || 'Unknown Volume';
+  const getBookTitle = (bookData) => {
+    if (typeof bookData === 'object' && bookData?.title) return bookData.title;
+    return books.find(b => b._id === bookData)?.title || 'Unknown Volume';
+  };
 
   const topBooksData = Object.keys(bookBorrowCounts)
     .map(bookId => ({
@@ -66,7 +84,7 @@ export default function Dashboard() {
       const dueDateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
       
       return {
-        id: b.id,
+        id: b._id,
         title: getBookTitle(b.bookId),
         member: b.borrowerName,
         dueDate: dueDateStr,

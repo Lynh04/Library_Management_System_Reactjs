@@ -6,10 +6,12 @@ import BookManagement from './src/pages/BookManagement';
 import BorrowManagement from './src/pages/BorrowManagement';
 import Dashboard from './src/components/Dashboard';
 import Statistics from './src/components/Statistics';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
     <Router>
+      <Toaster position="top-right" reverseOrder={false} />
       <div className="min-h-screen bg-muted/20">
         <Sidebar />
         <TopBar />
