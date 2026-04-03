@@ -5,7 +5,7 @@ import { borrowingService } from '../../services/borrowingService';
 import { bookService } from '../../services/bookService';
 import { Plus, Search, Calendar, User, BookOpen, ArrowLeftRight, CheckCircle, Clock } from 'lucide-react';
 import { Modal } from '../Modal';
-import { Button, Badge } from '../UI';
+import { Button, Badge } from '../ui';
 import { cn } from '@/lib/utils';
 
 const initialBooks = [
@@ -86,7 +86,7 @@ export default function Borrowings() {
     return books.find(b => b._id === bookData)?.title || 'Unknown Volume';
   };
 
-  const filteredBorrowings = borrowings.filter(b => 
+  const filteredBorrowings = borrowings.filter(b =>
     getBookTitle(b.bookId).toLowerCase().includes(searchQuery.toLowerCase()) ||
     b.borrowerName.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -108,9 +108,9 @@ export default function Borrowings() {
         <div className="p-4 border-b border-border bg-muted/20 flex items-center gap-4">
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-            <input 
-              className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" 
-              placeholder="Search by borrower or book..." 
+            <input
+              className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+              placeholder="Search by borrower or book..."
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -133,7 +133,7 @@ export default function Borrowings() {
               {filteredBorrowings.map((record) => (
                 <tr key={record._id} className="hover:bg-muted/10 transition-colors group">
                   <td className="px-6 py-4">
-                    <button 
+                    <button
                       onClick={() => navigate('/books')}
                       className="flex items-center gap-3 hover:text-primary transition-colors cursor-pointer text-left"
                     >
@@ -167,9 +167,9 @@ export default function Borrowings() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     {record.status === 'Borrowed' ? (
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
+                      <Button
+                        size="sm"
+                        variant="outline"
                         className="h-8 text-xs font-bold"
                         onClick={() => handleReturn(record._id)}
                       >
@@ -187,9 +187,9 @@ export default function Borrowings() {
       </div>
 
       {/* Borrow Modal */}
-      <Modal 
-        isOpen={isBorrowModalOpen} 
-        onClose={() => setIsBorrowModalOpen(false)} 
+      <Modal
+        isOpen={isBorrowModalOpen}
+        onClose={() => setIsBorrowModalOpen(false)}
         title="Initiate Borrowing"
       >
         <form className="space-y-4" onSubmit={handleBorrow}>
@@ -197,7 +197,7 @@ export default function Borrowings() {
             <label className="text-sm font-bold tracking-tight">Select Volume</label>
             <div className="relative">
               <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-              <select 
+              <select
                 required
                 className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none"
                 value={formData.bookId}
@@ -217,9 +217,9 @@ export default function Borrowings() {
             <label className="text-sm font-bold tracking-tight">Borrower Name</label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-              <input 
+              <input
                 required
-                className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" 
+                className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                 placeholder="e.g. Julian Davenport"
                 type="text"
                 value={formData.borrowerName}
@@ -240,8 +240,8 @@ export default function Borrowings() {
 
           <div className="flex justify-end gap-3 pt-4">
             <Button type="button" variant="outline" onClick={() => setIsBorrowModalOpen(false)}>Cancel</Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={!formData.bookId || books.find(b => b._id === formData.bookId)?.availableStock === 0}
             >
               Confirm Loan

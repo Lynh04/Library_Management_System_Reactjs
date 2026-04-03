@@ -5,7 +5,7 @@ import { bookService } from '../../services/bookService';
 import { authorService } from '../../services/authorService';
 import { Plus, Search, Edit2, Trash2, Eye, BookOpen, User, Calendar, Hash, AlertTriangle } from 'lucide-react';
 import { Modal } from '../Modal';
-import { Button, Badge } from '../UI';
+import { Button, Badge } from '../ui';
 import { cn } from '@/lib/utils';
 
 const initialAuthors = [
@@ -139,9 +139,9 @@ export default function Books() {
         <div className="p-4 border-b border-border bg-muted/20 flex items-center gap-4">
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-            <input 
-              className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" 
-              placeholder="Search catalog..." 
+            <input
+              className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+              placeholder="Search catalog..."
               type="text"
             />
           </div>
@@ -170,7 +170,7 @@ export default function Books() {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-muted-foreground whitespace-nowrap">
-                    <button 
+                    <button
                       onClick={() => navigate('/authors')}
                       className="flex items-center gap-2 hover:text-primary transition-colors cursor-pointer"
                     >
@@ -208,9 +208,9 @@ export default function Books() {
                       <Button size="icon" variant="ghost" onClick={() => handleEditClick(book)}>
                         <Edit2 size={16} />
                       </Button>
-                      <Button 
-                        size="icon" 
-                        variant="ghost" 
+                      <Button
+                        size="icon"
+                        variant="ghost"
                         className="text-destructive hover:text-destructive hover:bg-destructive/10"
                         onClick={() => {
                           setSelectedBook(book);
@@ -229,9 +229,9 @@ export default function Books() {
       </div>
 
       {/* Add Book Modal */}
-      <Modal 
-        isOpen={isAddModalOpen} 
-        onClose={() => setIsAddModalOpen(false)} 
+      <Modal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
         title="Add New Volume"
       >
         <form className="space-y-4" onSubmit={handleAddBook}>
@@ -239,9 +239,9 @@ export default function Books() {
             <label className="text-sm font-bold tracking-tight">Book Title</label>
             <div className="relative">
               <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-              <input 
+              <input
                 required
-                className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" 
+                className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                 placeholder="e.g. One Hundred Years of Solitude"
                 type="text"
                 value={formData.title}
@@ -254,7 +254,7 @@ export default function Books() {
             <label className="text-sm font-bold tracking-tight">Author</label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-              <select 
+              <select
                 required
                 className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none"
                 value={formData.authorId}
@@ -273,9 +273,9 @@ export default function Books() {
               <label className="text-sm font-bold tracking-tight">Total Stock</label>
               <div className="relative">
                 <Hash className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-                <input 
+                <input
                   required
-                  className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" 
+                  className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                   min="1"
                   type="number"
                   value={formData.totalStock}
@@ -288,8 +288,8 @@ export default function Books() {
               <label className="text-sm font-bold tracking-tight">Published Year (Optional)</label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-                <input 
-                  className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" 
+                <input
+                  className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                   max={new Date().getFullYear()}
                   type="number"
                   value={formData.publishedYear}
@@ -307,9 +307,9 @@ export default function Books() {
       </Modal>
 
       {/* Edit Book Modal */}
-      <Modal 
-        isOpen={isEditModalOpen} 
-        onClose={() => setIsEditModalOpen(false)} 
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
         title="Edit Volume"
       >
         <form className="space-y-4" onSubmit={handleUpdateBook}>
@@ -317,9 +317,9 @@ export default function Books() {
             <label className="text-sm font-bold tracking-tight">Book Title</label>
             <div className="relative">
               <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-              <input 
+              <input
                 required
-                className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" 
+                className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                 placeholder="e.g. One Hundred Years of Solitude"
                 type="text"
                 value={formData.title}
@@ -332,7 +332,7 @@ export default function Books() {
             <label className="text-sm font-bold tracking-tight">Author</label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-              <select 
+              <select
                 required
                 className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none"
                 value={formData.authorId}
@@ -351,9 +351,9 @@ export default function Books() {
               <label className="text-sm font-bold tracking-tight">Total Stock</label>
               <div className="relative">
                 <Hash className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-                <input 
+                <input
                   required
-                  className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" 
+                  className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                   min="1"
                   type="number"
                   value={formData.totalStock}
@@ -366,8 +366,8 @@ export default function Books() {
               <label className="text-sm font-bold tracking-tight">Published Year (Optional)</label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-                <input 
-                  className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all" 
+                <input
+                  className="w-full bg-white border border-border rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                   max={new Date().getFullYear()}
                   type="number"
                   value={formData.publishedYear}
@@ -385,9 +385,9 @@ export default function Books() {
       </Modal>
 
       {/* View Book Modal */}
-      <Modal 
-        isOpen={isViewModalOpen} 
-        onClose={() => setIsViewModalOpen(false)} 
+      <Modal
+        isOpen={isViewModalOpen}
+        onClose={() => setIsViewModalOpen(false)}
         title="Volume Details"
       >
         {selectedBook && (
@@ -451,9 +451,9 @@ export default function Books() {
       </Modal>
 
       {/* Delete Confirmation Modal */}
-      <Modal 
-        isOpen={isDeleteModalOpen} 
-        onClose={() => setIsDeleteModalOpen(false)} 
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
         title="Confirm Deletion"
         className="max-w-md"
       >

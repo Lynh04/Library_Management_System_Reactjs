@@ -4,7 +4,7 @@ import { bookService } from '../../services/bookService';
 import { borrowingService } from '../../services/borrowingService';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { TrendingUp, ArrowLeftRight, BookOpen, Users, Download, Filter, Calendar } from 'lucide-react';
-import { Button } from '../UI';
+import { Button } from '../ui';
 
 export default function Statistics() {
   const navigate = useNavigate();
@@ -34,16 +34,16 @@ export default function Statistics() {
   };
 
   const totalEvents = borrowings.length;
-  
+
   // Borrow Status Pie Chart
   const returnedCount = borrowings.filter(b => b.status === 'Returned').length;
   const borrowedCount = borrowings.filter(b => b.status === 'Borrowed').length;
-  
+
   const borrowStatusData = [
     { name: 'Returned', value: returnedCount, color: '#2563eb' },
     { name: 'Borrowed', value: borrowedCount, color: '#f59e0b' },
   ];
-  
+
   const returnEfficiency = totalEvents > 0 ? ((returnedCount / totalEvents) * 100).toFixed(1) : 0;
 
   // Top Borrowed Books logic
@@ -51,7 +51,7 @@ export default function Statistics() {
   borrowings.forEach(b => {
     bookBorrowCounts[b.bookId] = (bookBorrowCounts[b.bookId] || 0) + 1;
   });
-  
+
   const getBookTitle = (bookData) => {
     if (typeof bookData === 'object' && bookData?.title) return bookData.title;
     return books.find(b => b._id === bookData)?.title || 'Unknown Volume';
@@ -68,9 +68,9 @@ export default function Statistics() {
   // Monthly trends logic (last 6 months)
   const currentMonth = new Date().getMonth();
   const monthsList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  
+
   const last6Months = [];
-  for(let i = 5; i >= 0; i--) {
+  for (let i = 5; i >= 0; i--) {
     let m = currentMonth - i;
     if (m < 0) m += 12;
     last6Months.push(monthsList[m]);
@@ -125,22 +125,22 @@ export default function Statistics() {
               <p className="text-xs text-muted-foreground mt-0.5">Most circulated titles across all departments.</p>
             </div>
           </div>
-          
+
           <div className="h-[400px] w-full">
             {topBooksData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={topBooksData} layout="vertical" margin={{ top: 0, right: 30, left: 40, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#f1f5f9" />
                   <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
-                  <YAxis 
-                    type="category" 
-                    dataKey="name" 
-                    axisLine={false} 
-                    tickLine={false} 
-                    tick={{ fontSize: 11, fill: '#64748b', fontWeight: 500 }} 
+                  <YAxis
+                    type="category"
+                    dataKey="name"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 11, fill: '#64748b', fontWeight: 500 }}
                     width={120}
                   />
-                  <Tooltip 
+                  <Tooltip
                     cursor={{ fill: '#f8fafc' }}
                     contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                   />
@@ -148,9 +148,9 @@ export default function Statistics() {
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-               <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                 No borrowing data available for Top Volumes.
-               </div>
+              <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                No borrowing data available for Top Volumes.
+              </div>
             )}
           </div>
         </div>
@@ -184,22 +184,22 @@ export default function Statistics() {
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip 
+                  <Tooltip
                     contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }}
                   />
-                  <Legend 
-                    verticalAlign="bottom" 
-                    height={36} 
+                  <Legend
+                    verticalAlign="bottom"
+                    height={36}
                     iconType="circle"
                     formatter={(value) => <span className="text-xs font-medium text-muted-foreground">{value}</span>}
                   />
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-               <div className="w-full h-full rounded-full border-8 border-slate-100 flex items-center justify-center"></div>
+              <div className="w-full h-full rounded-full border-8 border-slate-100 flex items-center justify-center"></div>
             )}
-            
-            <div 
+
+            <div
               onClick={() => navigate('/borrowings')}
               className="absolute inset-0 flex flex-col items-center justify-center pointer-events-auto cursor-pointer group pb-8"
             >
@@ -237,7 +237,7 @@ export default function Statistics() {
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} />
-                <Tooltip 
+                <Tooltip
                   cursor={{ fill: '#f8fafc' }}
                   contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                 />

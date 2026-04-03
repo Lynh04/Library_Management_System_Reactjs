@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 import { authorService } from '../../services/authorService';
 import { Plus, Search, Edit2, Trash2, Eye, Calendar, User } from 'lucide-react';
 import { Modal } from '../Modal';
-import { Button, Badge } from '../UI';
+import { Button, Badge } from '../ui';
 
 const initialAuthors = [
     { _id: '1', name: 'Clarice Lispector', bio: 'Renowned for her innovative stream-of-consciousness style...', birthDate: '1920-12-10', createdAt: '2023-01-01T00:00:00Z', updatedAt: '2023-01-01T00:00:00Z' },
