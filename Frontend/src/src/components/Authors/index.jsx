@@ -104,8 +104,8 @@ export default function Authors() {
     };
 
     return (
-        <div className="p-8 space-y-6">
-            <div className="flex items-center justify-between">
+        <div className="p-4 sm:p-6 lg:p-8 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-2xl font-bold tracking-tight">Authors</h2>
                     <p className="text-sm text-muted-foreground mt-1">Manage the literary contributors in your collection.</p>

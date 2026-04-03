@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Sidebar } from './src/components/Sidebar';
 import { TopBar } from './src/components/Header';
@@ -9,14 +10,16 @@ import Statistics from './src/components/Statistics';
 import { Toaster } from 'react-hot-toast';
 
 function App() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   return (
     <Router>
       <Toaster position="top-right" reverseOrder={false} />
       <div className="min-h-screen bg-muted/20">
-        <Sidebar />
-        <TopBar />
+        <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+        <TopBar onMenuClick={() => setIsSidebarOpen(true)} />
         
-        <main className="pl-64 pt-16">
+        <main className="md:pl-64 pt-16 transition-all duration-300">
           <Routes>
             {/* Redirect root to dashboard */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />

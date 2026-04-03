@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export function Sidebar() {
+export function Sidebar({ isOpen, setIsOpen }) {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { id: 'authors', label: 'Authors', icon: Users, path: '/authors' },
@@ -20,8 +20,21 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-64 bg-white border-r border-border flex flex-col z-50">
-      <div className="p-6 flex items-center gap-2 border-b border-border">
+    <>
+      {/* Mobile Overlay */}
+      <div 
+        className={cn(
+          "fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 transition-opacity duration-300 md:hidden",
+          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        )}
+        onClick={() => setIsOpen(false)}
+      />
+
+      <aside className={cn(
+        "fixed left-0 top-0 h-full w-64 bg-white border-r border-border flex flex-col z-50 transition-transform duration-300",
+        isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+      )}>
+        <div className="p-6 flex items-center gap-2 border-b border-border">
         <div className="bg-primary text-primary-foreground p-1.5 rounded-lg">
           <Library size={20} />
         </div>
@@ -33,6 +46,7 @@ export function Sidebar() {
           <NavLink
             key={item.id}
             to={item.path}
+            onClick={() => setIsOpen(false)}
             className={({ isActive }) => cn(
               "w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors hover:ring-1 hover:ring-primary/10",
               isActive 
@@ -56,5 +70,6 @@ export function Sidebar() {
         </div>
       </div>
     </aside>
+    </>
   );
 }

@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom';
-import { Bell, Search, User } from 'lucide-react';
+import { Bell, Search, User, Menu } from 'lucide-react';
 
-export function TopBar() {
+export function TopBar({ onMenuClick }) {
   const location = useLocation();
   
   const pageTitles = {
@@ -15,8 +15,16 @@ export function TopBar() {
   const title = pageTitles[location.pathname] || 'Library System';
 
   return (
-    <header className="fixed top-0 right-0 left-64 h-16 bg-white border-b border-border flex items-center justify-between px-8 z-40">
-      <h1 className="text-xl font-bold tracking-tight">{title}</h1>
+    <header className="fixed top-0 right-0 left-0 md:left-64 h-16 bg-white border-b border-border flex items-center justify-between px-4 sm:px-8 z-30 transition-all duration-300">
+      <div className="flex items-center gap-3">
+        <button 
+          onClick={onMenuClick}
+          className="md:hidden text-muted-foreground hover:text-primary p-1 rounded-md active:bg-muted transition-colors"
+        >
+          <Menu size={24} />
+        </button>
+        <h1 className="text-lg sm:text-xl font-bold tracking-tight truncate">{title}</h1>
+      </div>
 
       <div className="flex items-center gap-6">
         <div className="relative hidden md:block">
