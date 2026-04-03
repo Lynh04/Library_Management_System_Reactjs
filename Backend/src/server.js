@@ -20,7 +20,8 @@ connectDB();
 // CORS Configuration
 const allowedOrigins = [
     "http://localhost:3000",      // Your Vite Frontend
-    "https://library-management-system-reactjs.vercel.app",            // Production App
+    "https://library-management-system-reactjs.vercel.app",
+    "https://library-management-system-reactjs-nguyenthithuylinh.vercel.app/",           // Production App
     "https://admin.app.com"       // Production Admin
 ];
 
